@@ -5,7 +5,7 @@ export default [
         path: 'documentation',
         loadComponent: () => import('@/pages/documentation/documentation').then((c) => c.Documentation)
     },
-    { path: 'crud', loadComponent: () => import('@/pages/crud/crud').then((c) => c.Crud), data: { breadcrumb: 'Crud' } },
+    { path: 'cate/p1/stock', loadComponent: () => import('@/pages/crud/crud').then((c) => c.Crud), data: { breadcrumb: 'Crud' } },
     { path: 'empty', loadComponent: () => import('@/pages/empty/empty').then((c) => c.Empty), data: { breadcrumb: 'Empty' } },
     {
         path: 'invoice',

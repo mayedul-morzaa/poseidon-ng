@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 export default [
-    { path: 'button', data: { breadcrumb: 'Button' }, loadComponent: () => import('./buttondemo').then((c) => c.ButtonDemo) },
+    { path: 'button', data: { breadcrumb: 'Button' , title: 'button title'}, loadComponent: () => import('./buttondemo').then((c) => c.ButtonDemo) },
     { path: 'charts', data: { breadcrumb: 'Charts' }, loadComponent: () => import('./chartdemo').then((c) => c.ChartDemo) },
     { path: 'file', data: { breadcrumb: 'File' }, loadComponent: () => import('./filedemo').then((c) => c.FileDemo) },
     { path: 'formlayout', data: { breadcrumb: 'Form Layout' }, loadComponent: () => import('./formlayoutdemo').then((c) => c.FormLayoutDemo) },

@@ -41,6 +41,28 @@ export class AppMenu {
         },
         {separator: true},
         {
+            label: 'Features',
+            icon: 'pi pi-th-large',
+            items: [
+                {
+                    label: 'Admin',
+                    icon: 'pi pi-fw pi-comment',
+                    routerLink: ['/']
+                },
+                {
+                    label: 'Inventory',
+                    icon: 'pi pi-fw pi-image',
+                    routerLink: ['/dashboard-ecommerce']
+                },
+                {
+                    label: 'Accounts',
+                    icon: 'pi pi-fw pi-building-columns',
+                    routerLink: ['/dashboard-banking']
+                }  
+            ]
+        },
+        {separator: true},
+        {
             label: 'Apps',
             icon: 'pi pi-th-large',
             items: [

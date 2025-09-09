@@ -1,5 +1,5 @@
-import {Component, computed, ElementRef, inject, model, signal, ViewChild} from '@angular/core';
-import {RouterModule} from '@angular/router';
+import {Component, computed, ElementRef, inject, model, OnDestroy, OnInit, signal, ViewChild} from '@angular/core';
+import {ActivatedRoute, NavigationEnd, Router, RouterModule} from '@angular/router';
 import {CommonModule} from '@angular/common';
 import {StyleClassModule} from 'primeng/styleclass';
 import {LayoutService} from '@/layout/service/layout.service';
@@ -13,6 +13,8 @@ import {BadgeModule} from 'primeng/badge';
 import {OverlayBadgeModule} from 'primeng/overlaybadge';
 import {AvatarModule} from 'primeng/avatar';
 import {FormsModule} from "@angular/forms";
+import { TitleService } from '@/core/services/title.service';
+import { filter, Subject, takeUntil } from 'rxjs';
 
 interface NotificationsBars {
     id: string;
@@ -23,7 +25,7 @@ interface NotificationsBars {
 @Component({
     selector: '[app-topbar]',
     standalone: true,
-    imports: [RouterModule, CommonModule, FormsModule, StyleClassModule, AppBreadcrumb, InputTextModule, ButtonModule, IconFieldModule, InputIconModule, RippleModule, BadgeModule, OverlayBadgeModule, AvatarModule],
+    imports: [RouterModule, CommonModule, FormsModule, StyleClassModule, InputTextModule, ButtonModule, IconFieldModule, InputIconModule, RippleModule, BadgeModule, OverlayBadgeModule, AvatarModule],
     template: `
         <div class="layout-topbar">
             <div class="topbar-left">
@@ -31,8 +33,9 @@ interface NotificationsBars {
                     <i class="pi pi-chevron-left"></i>
                 </a>
                 <img class="horizontal-logo" src="/layout/images/logo-white.svg" alt="logo"/>
-                <span class="topbar-separator"></span>
-                <div app-breadcrumb></div>
+                <!-- <span class="topbar-separator"></span>
+                <div app-breadcrumb></div> -->
+                <h3>{{title}}</h3>
                 <a routerLink="/">
                     <img class="mobile-logo" src="/layout/images/logo-{{ isDarkTheme() ? 'white' : 'dark' }}.svg"
                          alt="logo"/>
@@ -42,9 +45,17 @@ interface NotificationsBars {
             <div class="topbar-right">
                 <ul class="topbar-menu">
                     <li class="right-sidebar-item">
-                        <a class="right-sidebar-button" (click)="toggleSearchBar()">
+                        <!-- <a class="right-sidebar-button" (click)="toggleSearchBar()">
                             <i class="pi pi-search"></i>
-                        </a>
+                        </a> -->
+
+                    <p-iconfield iconPosition="right" class="flex-auto max-w-3xl">
+                        <p-inputicon>
+                            <i class="pi pi-search"></i>
+                        </p-inputicon>
+                        <input pInputText type="text" class="p-inputtext search-input w-full" placeholder="Search keyword" />
+                    </p-iconfield>
+
                     </li>
                     <li class="right-sidebar-item">
                         <button class="app-config-button" (click)="onConfigButtonClick()"><i class="pi pi-cog"></i>
@@ -193,9 +204,14 @@ interface NotificationsBars {
             </div>
         </div>`
 })
-export class AppTopbar {
-    layoutService = inject(LayoutService);
+export class AppTopbar implements OnInit, OnDestroy{
+    title: string = 'Default Title';
+    private destroy$ = new Subject<void>();
 
+    layoutService = inject(LayoutService);
+    titleService = inject(TitleService);
+    activatedRoute = inject(ActivatedRoute);
+    router = inject(Router);
     isDarkTheme = computed(() => this.layoutService.isDarkTheme());
 
     @ViewChild('menubutton') menuButton!: ElementRef;
@@ -292,6 +308,38 @@ export class AppTopbar {
     selectedNotificationBar = model(this.notificationsBars()[0].id ?? 'inbox');
 
     selectedNotificationsBarData = computed(() => this.notifications().find((f) => f.id === this.selectedNotificationBar()).data);
+
+    ngOnInit(): void {
+        this.titleService.title$.subscribe(t => {
+            if(t){
+                this.title = t;
+            }
+            else{
+                this.title = this.getRouteTitle(this.activatedRoute) || "Default App Title";
+            }
+              // Optional: update title on navigation
+            this.router.events.pipe(filter(e => e instanceof NavigationEnd))
+                .subscribe(() => {
+                this.titleService.title$.subscribe(customTitle => {
+                    if (!customTitle) {
+                    this.title = this.getRouteTitle(this.activatedRoute) || 'Default App Title';
+                    }
+                });
+            });
+        });
+    }
+
+    private getRouteTitle(route: ActivatedRoute): string | null {
+        let r = route;
+        while (r.firstChild) r = r.firstChild;
+
+        return r.snapshot.data['title'] || null;
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
 
     onMenuButtonClick() {
         this.layoutService.onMenuToggle();

@@ -6,15 +6,15 @@ import { AppTopbar } from './app.topbar';
 import { AppSidebar } from './app.sidebar';
 import { LayoutService } from '@/layout/service/layout.service';
 import { AppConfigurator } from './app.configurator';
-import { AppBreadcrumb } from '@/layout/components/app.breadcrumb';
 import { AppFooter } from '@/layout/components/app.footer';
 import { AppSearch } from '@/layout/components/app.search';
 import { AppRightMenu } from '@/layout/components/app.rightmenu';
+import { CustomBreadcrumb } from './custom.breadcrumb';
 
 @Component({
     selector: 'app-layout',
     standalone: true,
-    imports: [CommonModule, AppTopbar, AppSidebar, RouterModule, AppConfigurator, AppBreadcrumb, AppFooter, AppSearch, AppRightMenu],
+    imports: [CommonModule, AppTopbar, AppSidebar, RouterModule, AppConfigurator,CustomBreadcrumb,AppFooter, AppSearch, AppRightMenu],
     template: `
         <div class="layout-wrapper" [ngClass]="containerClass()">
             <div app-sidebar></div>
@@ -22,7 +22,9 @@ import { AppRightMenu } from '@/layout/components/app.rightmenu';
                 <div class="layout-content-wrapper-inside">
                     <div app-topbar></div>
                     <div class="layout-content">
-                        <div app-breadcrumb></div>
+                        <div class="pb-2 border-radius">
+                            <custom-breadcrumb></custom-breadcrumb>
+                        </div>
                         <router-outlet></router-outlet>
                     </div>
                     <div app-footer></div>

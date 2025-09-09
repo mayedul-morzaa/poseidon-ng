@@ -10,6 +10,10 @@ export const appRoutes: Routes = [
         component: AppLayout,
         children: [
             {
+                path: 'inventory',
+                loadChildren: ()=> import('./app/features/inventory/inventory-module').then(m => m.InventoryModule)
+            },
+            {
                 path: '',
                 loadComponent: () => import('@/pages/dashboards/marketing/marketingdashboard').then((c) => c.MarketingDashboard),
                 data: {breadcrumb: 'Marketing Dashboard'}
@@ -28,7 +32,7 @@ export const appRoutes: Routes = [
                 path: 'uikit',
                 data: {breadcrumb: 'UI Kit'},
                 loadChildren: () => import('@/pages/uikit/uikit.routes')
-            },
+            },      
             {
                 path: 'documentation',
                 data: {breadcrumb: 'Documentation'},
@@ -39,12 +43,6 @@ export const appRoutes: Routes = [
                 loadChildren: () => import('@/pages/pages.routes'),
                 data: {breadcrumb: 'Pages'}
             },
-            {
-                path: 'apps',
-                loadChildren: () => import('@/apps/apps.routes'),
-                data: {breadcrumb: 'Apps'}
-            },
-
             {
                 path: 'blocks',
                 data: {breadcrumb: 'Free Blocks'},
