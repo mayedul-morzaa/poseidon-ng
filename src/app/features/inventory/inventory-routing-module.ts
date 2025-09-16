@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ProductStockComponent } from './components/product-stock-component';
+import { GalleryList } from './pages/gallery/gallery-list/gallery-list';
 
 const routes: Routes = [
-  { path: 'stock/:id', component: ProductStockComponent }
+  { path: 'gallery/list', component: GalleryList }
 ];
 
 @NgModule({
