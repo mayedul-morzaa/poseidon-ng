@@ -1,1 +1,139 @@
-<p>gallery-add-or-update works!</p>
+
+    <p-dialog
+      [(visible)]="visible"
+      [modal]="true"
+      [style]="{ width: '600px', maxHeight: '90vh' }"
+      [contentStyle]="{ overflow: 'auto' }"
+      header="Add New Gallery"
+      (onHide)="closeDialog()"
+    >
+      <!-- <form [formGroup]="form" (ngSubmit)="submit()" class="p-fluid space-y-4">
+        <label for="title">Gallery Title</label>
+        <input pInputText id="title" formControlName="title" />
+
+        <label for="images">Gallery Images</label>
+        <p-fileUpload
+          name="galleryImages"
+          [multiple]="true"
+          [customUpload]="true"
+          (uploadHandler)="handleUpload($event)"
+          accept="image/*"
+          chooseLabel="Select Images"
+          dropZoneLabel="Drag & Drop Images Here"
+          class="w-full"
+        ></p-fileUpload>
+
+        <div class="flex justify-end pt-4">
+          <button pButton type="submit" label="Save" icon="pi pi-check" [disabled]="form.invalid"></button>
+        </div>
+      </form> -->
+  
+    <div class="card surface-card border-round-xl shadow-3 p-5">
+  <h2 class="text-3xl font-bold text-primary mb-5 flex align-items-center">
+    <i class="pi pi-image mr-2 text-2xl"></i> Gallery Entry
+  </h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="formgrid grid gap-4">
+
+    <!-- Row 1 -->
+    <div class="col-12 md:col-6">
+      <div class="surface-section p-3 border-round shadow-1">
+        <label for="id" class="block text-sm font-semibold mb-2">Gallery ID</label>
+        <input pInputText id="id" formControlName="id" class="w-full" />
+      </div>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <div class="surface-section p-3 border-round shadow-1">
+        <label for="parentGalleryId" class="block text-sm font-semibold mb-2">Parent Gallery ID</label>
+        <input pInputText id="parentGalleryId" formControlName="parentGalleryId" class="w-full" />
+      </div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="col-12 md:col-6">
+      <div class="surface-100 p-3 border-round shadow-1">
+        <label for="parentName" class="block text-sm font-semibold mb-2">Parent Name</label>
+        <input pInputText id="parentName" formControlName="parentName" class="w-full" />
+      </div>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <div class="surface-100 p-3 border-round shadow-1">
+        <label for="title" class="block text-sm font-semibold mb-2">Title <span class="text-red-500">*</span></label>
+        <input pInputText id="title" formControlName="title" maxlength="100" class="w-full" />
+        <small class="text-red-500" *ngIf="form.controls['title'].invalid && form.controls['title'].touched">
+          Required (max 100 characters)
+        </small>
+      </div>
+    </div>
+
+    <!-- Row 3 -->
+    <div class="col-12 md:col-6">
+      <div class="surface-section p-3 border-round shadow-1">
+        <label for="thumbImagePath" class="block text-sm font-semibold mb-2">Thumbnail Path</label>
+        <input pInputText id="thumbImagePath" formControlName="thumbImagePath" class="w-full" />
+      </div>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <div class="surface-section p-3 border-round shadow-1">
+        <label for="imageAltText" class="block text-sm font-semibold mb-2">Image Alt Text</label>
+        <input pInputText id="imageAltText" formControlName="imageAltText" maxlength="150" class="w-full" />
+      </div>
+    </div>
+
+    <!-- Row 4 -->
+    <div class="col-12 md:col-6">
+      <div class="surface-100 p-3 border-round shadow-1">
+        <label for="editDate" class="block text-sm font-semibold mb-2">Edit Date</label>
+        <input type="date" pInputText id="editDate" formControlName="editDate" class="w-full" />
+      </div>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <div class="surface-100 p-3 border-round shadow-1">
+        <label for="lastUpdateText" class="block text-sm font-semibold mb-2">Last Update Text</label>
+        <input pInputText id="lastUpdateText" formControlName="lastUpdateText" class="w-full" />
+      </div>
+    </div>
+
+    <!-- Row 5 -->
+    <div class="col-12 md:col-6">
+      <div class="surface-section p-3 border-round shadow-1">
+        <label for="thumbImage" class="block text-sm font-semibold mb-2">Thumbnail Image</label>
+        <p-fileUpload
+          name="thumbImage"
+          [customUpload]="true"
+          [auto]="true"
+          (uploadHandler)="handleUpload($event)"
+          accept="image/*"
+          chooseLabel="Select Image"
+          class="w-full"
+        />
+      </div>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <div class="surface-section p-3 border-round shadow-1">
+        <label for="galleryItems" class="block text-sm font-semibold mb-2">Gallery Items</label>
+        <textarea pInputTextarea id="galleryItems" formControlName="galleryItems" rows="3" class="w-full"></textarea>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="col-12 flex justify-end pt-3">
+      <button
+        pButton
+        type="submit"
+        label="Save Gallery"
+        icon="pi pi-check"
+        class="p-button p-button-lg p-button-primary"
+        [disabled]="form.invalid"
+      ></button>
+    </div>
+  </form>
+</div>
+
+
+    </p-dialog>

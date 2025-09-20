@@ -19,7 +19,7 @@ export interface GalleryDto {
 }
 
 export interface GalleryItemDto {
-  id?: number;
+  id: number;
   galleryInfoId: number;
   galleryName: string;
   title: string;

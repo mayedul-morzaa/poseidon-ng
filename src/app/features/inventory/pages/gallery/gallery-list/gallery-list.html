@@ -1,4 +1,19 @@
 
+<!-- Header Bar -->
+    <div class="flex items-center justify-between mb-4 px-2">
+      <h1 class="text-xl font-semibold text-surface-800 dark:text-white">Gallery List</h1>
+
+      <button
+        pButton
+        icon="pi pi-plus"
+        label="Add Gallery"
+        class="p-button-sm p-button-success"
+        (click)="showAddDialog = true"
+      ></button>
+    </div>
+
+    <app-gallery-add-or-update [visible]="showAddDialog" (closed)="showAddDialog = false" />
+
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 @for (gallery of galleries; track gallery.id) {
   <p-card class="mb-6 cursor-pointer" [routerLink]="['/inventory/gallery/details', gallery.id]" >
@@ -6,7 +21,7 @@
         <ng-template pTemplate="header">
           <div class="flex items-center justify-between px-4 py-2">
             <img
-              [src]="'https://primefaces.org/cdn/primeng/images/demo/product/bamboo-watch.jpg'"
+              [src]="getGalleryImage(gallery)"
               class="w-16 h-16 object-cover rounded"
             />
             <h2 class="text-lg font-semibold pl-2 flex-1">
@@ -22,7 +37,7 @@
     <div class="grid gap-2 px-2" style="grid-template-columns: repeat(5, 1fr);">
   @for (item of gallery.galleryItems; track item.id) {
         <img
-        [src]="'https://primefaces.org/cdn/primeng/images/demo/product/bamboo-watch.jpg'"
+        [src]="getItemImage(item)"
         [alt]="item.title"
         class="w-full h-12 object-cover rounded border border-surface-200 dark:border-surface-700"
         />

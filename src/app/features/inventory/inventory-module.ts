@@ -9,6 +9,7 @@ import { InventoryRoutingModule } from './inventory-routing-module';
   imports: [
     CommonModule,
     InventoryRoutingModule
-  ]
+  ],
+  providers : []
 })
 export class InventoryModule { }

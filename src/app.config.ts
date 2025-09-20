@@ -1,11 +1,15 @@
 import {provideHttpClient, withFetch} from '@angular/common/http';
-import {ApplicationConfig} from '@angular/core';
+import {ApplicationConfig, importProvidersFrom} from '@angular/core';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {provideRouter, withEnabledBlockingInitialNavigation, withInMemoryScrolling} from '@angular/router';
 import Aura from '@primeuix/themes/aura';
 import {providePrimeNG} from 'primeng/config';
 import {appRoutes} from './app.routes';
 import {definePreset} from '@primeuix/themes';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 
 const MyPreset = definePreset(Aura, {
     semantic: {
@@ -79,6 +83,10 @@ export const appConfig: ApplicationConfig = {
         ),
         provideHttpClient(withFetch()),
         provideAnimationsAsync(),
-        providePrimeNG({theme: {preset: MyPreset, options: {darkModeSelector: '.app-dark'}}})
+        providePrimeNG({theme: {preset: MyPreset, options: {darkModeSelector: '.app-dark'}}}),
+        importProvidersFrom(ToastModule,ConfirmDialogModule),
+        {provide: MessageService, useClass: MessageService},
+        {provide: ConfirmationService, useClass: ConfirmationService},
+        DialogService
     ]
 };

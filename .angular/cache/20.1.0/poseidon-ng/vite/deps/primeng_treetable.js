@@ -1,32 +1,38 @@
 import {
+  Checkbox
+} from "./chunk-LDNGB7XW.js";
+import {
   Paginator,
   PaginatorModule
-} from "./chunk-WSXVXFJG.js";
-import "./chunk-OQVMTJEZ.js";
-import "./chunk-T7DDSWZU.js";
-import "./chunk-MDUN4K4O.js";
-import "./chunk-NQ6JYREN.js";
-import {
-  Checkbox
-} from "./chunk-JYDFG43Y.js";
-import "./chunk-HFGYKDXU.js";
+} from "./chunk-LIYNNZ4T.js";
+import "./chunk-MUYIBQ5F.js";
+import "./chunk-XXDDZMYW.js";
+import "./chunk-ESMSL4ZY.js";
+import "./chunk-JUFAAMW4.js";
+import "./chunk-P5D6BFU6.js";
+import "./chunk-SV6OWICN.js";
 import {
   Scroller
-} from "./chunk-FTZD6X3V.js";
-import "./chunk-MO45GXRZ.js";
-import "./chunk-VR4EDW3U.js";
-import "./chunk-PLQCNXFO.js";
-import "./chunk-MNO6SRB4.js";
-import "./chunk-HQ727HFT.js";
-import "./chunk-6PBBDZZF.js";
+} from "./chunk-PLZ2O5NB.js";
+import "./chunk-5NMAXBGE.js";
+import "./chunk-FS3A5KY3.js";
+import "./chunk-B3K7ZJ3C.js";
+import "./chunk-LHW232RG.js";
 import {
-  Ripple
-} from "./chunk-HWH7SFX5.js";
+  FormsModule,
+  NgControlStatus,
+  NgModel
+} from "./chunk-LNLCWJOM.js";
+import "./chunk-BB55NINM.js";
+import "./chunk-DH7S3DZN.js";
+import "./chunk-6PBBDZZF.js";
 import {
   Badge,
   BadgeModule
-} from "./chunk-KMECO3P2.js";
-import "./chunk-PJHA3UFZ.js";
+} from "./chunk-MQBCIFXF.js";
+import {
+  Ripple
+} from "./chunk-SG3SQ3Q5.js";
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -37,53 +43,24 @@ import {
   SortAmountDownIcon,
   SortAmountUpAltIcon,
   SpinnerIcon
-} from "./chunk-XJJFUXRG.js";
-import "./chunk-BB55NINM.js";
-import "./chunk-64HTZ3ER.js";
+} from "./chunk-M2NLCFFD.js";
+import "./chunk-CDHYTCZZ.js";
 import {
   DomHandler
-} from "./chunk-QMH7WPXY.js";
+} from "./chunk-ASXXD43H.js";
 import {
   BaseComponent
-} from "./chunk-4R6G4SOY.js";
+} from "./chunk-AWUN6YHT.js";
 import {
   BaseStyle
-} from "./chunk-NFUQ3G5I.js";
-import "./chunk-3P3YI57Q.js";
+} from "./chunk-2VI3BO3Y.js";
 import {
   FilterService,
   PrimeTemplate,
   SharedModule
-} from "./chunk-PHFMZFTR.js";
-import {
-  G2 as G,
-  Ht,
-  J,
-  K,
-  O,
-  P,
-  Q,
-  Q2,
-  R,
-  W,
-  Y2 as Y,
-  a,
-  bt,
-  c,
-  ct,
-  k,
-  kt,
-  pt,
-  s,
-  z2 as z
-} from "./chunk-ICG2ZITK.js";
+} from "./chunk-F24ZRDL7.js";
 import "./chunk-ICPKC5OO.js";
 import "./chunk-XQUGZOCG.js";
-import {
-  FormsModule,
-  NgControlStatus,
-  NgModel
-} from "./chunk-LNLCWJOM.js";
 import {
   CommonModule,
   NgClass,
@@ -94,6 +71,29 @@ import {
   isPlatformBrowser
 } from "./chunk-A73ZCNWU.js";
 import "./chunk-7DPHYZ4E.js";
+import "./chunk-P3RMFOX5.js";
+import {
+  G,
+  Ht,
+  J,
+  K,
+  O,
+  P,
+  Q,
+  Q2,
+  R,
+  W,
+  Y,
+  a,
+  bt,
+  c,
+  ct,
+  k2 as k,
+  kt,
+  pt,
+  s2 as s,
+  z
+} from "./chunk-VPUSWSDP.js";
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -2974,7 +2974,7 @@ var TreeTable = class _TreeTable extends BaseComponent {
         dropIndex = dropIndex - 1;
       }
       if (allowDrop) {
-        Q(this.columns, dragIndex, dropIndex);
+        Q2(this.columns, dragIndex, dropIndex);
         this.onColReorder.emit({
           dragIndex,
           dropIndex,
@@ -6491,12 +6491,12 @@ var TTRow = class _TTRow extends BaseComponent {
   onTabKey(event) {
     const rows = this.el.nativeElement ? [...Y(this.el.nativeElement.parentNode, "tr")] : void 0;
     if (rows && s(rows)) {
-      const hasSelectedRow = rows.some((row) => Q2(row, "data-p-highlight") || row.getAttribute("aria-checked") === "true");
+      const hasSelectedRow = rows.some((row) => Q(row, "data-p-highlight") || row.getAttribute("aria-checked") === "true");
       rows.forEach((row) => {
         row.tabIndex = -1;
       });
       if (hasSelectedRow) {
-        const selectedNodes = rows.filter((node) => Q2(node, "data-p-highlight") || node.getAttribute("aria-checked") === "true");
+        const selectedNodes = rows.filter((node) => Q(node, "data-p-highlight") || node.getAttribute("aria-checked") === "true");
         selectedNodes[0].tabIndex = 0;
         return;
       }
