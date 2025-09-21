@@ -46,6 +46,20 @@
   <!-- Divider -->
   <hr class="my-4 border-surface-200 dark:border-surface-700" />
 
+  <!-- Add Item Button -->
+<div class="flex justify-end mb-4">
+  <p-fileUpload
+    #fileUpload
+    mode="basic"
+    [auto]="true"
+    [customUpload]="true"
+    [multiple]="true"
+    accept="image/*"
+    chooseLabel="Add Item Images"
+    class="p-button-sm p-button-primary"
+    (uploadHandler)="handleAddGalleryItems($event)"
+  />
+</div>
   <!-- Body: Gallery Items Grid -->
   <div class="grid grid-cols-12 gap-4">
     @if(gallery.galleryItems.length > 0){

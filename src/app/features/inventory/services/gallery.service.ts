@@ -44,6 +44,10 @@ export class GalleryService {
   }
 
   // =============== Gallery Item ===============
+    // Create new gallery
+  createGalleryItem(data: FormData): Observable<ApiResponse> {
+    return this.masterService.post<ApiResponse>(`${this.endpoint}/items/create`, data);
+  }
   deleteGalleryItem(id: number) : Observable<ApiResponse> {
     return this.masterService.delete<ApiResponse>(`${this.endpoint}/items/delete/${id}`);
   }

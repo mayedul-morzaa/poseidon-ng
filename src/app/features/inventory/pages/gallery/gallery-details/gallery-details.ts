@@ -1,18 +1,21 @@
 import { GalleryDto, GalleryItemDto } from '@/features/inventory/models/gallery.model';
 import { GalleryService } from '@/features/inventory/services/gallery.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card'
+import { FileUpload, FileUploadHandlerEvent, FileUploadModule } from 'primeng/fileupload';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-gallery-details',
   imports: [
     CardModule,
     ButtonModule,
-    FormsModule
+    FormsModule,
+    FileUploadModule
   ],
   templateUrl: './gallery-details.html'
 })
@@ -21,6 +24,8 @@ export class GalleryDetails implements OnInit{
   gallery!: GalleryDto ;
   editingGalleryId: number | null = null;
   editedTitle: string = '';
+  selectedItemFiles: File[] = [];
+  @ViewChild('fileUpload') fileUpload!: FileUpload;
 
   constructor(
     private route: ActivatedRoute,
@@ -209,5 +214,45 @@ export class GalleryDetails implements OnInit{
     }
   });
 }
+
+// Gallery Item Add
+handleAddGalleryItems(event: FileUploadHandlerEvent) {
+  const files: File[] = event.files;
+
+  const requests = files.map((file, index) => {
+    const formData = new FormData();
+    formData.append('title', `${this.gallery.title} - item${this.gallery.galleryItems.length + index + 1}`);
+    formData.append('thumbImage', file);
+    formData.append('imageAltText', this.gallery.title);
+    formData.append('galleryInfoId', this.gallery.id!.toString());
+    return formData;
+  });
+
+  const requests$ = requests.map(formData =>
+  this.galleryService.createGalleryItem(formData)
+  );
+
+  forkJoin(requests$).subscribe({
+    next: (responses) => {
+      console.log(responses);
+      this.loadGallery(this.galleryId);
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Items Added',
+        detail: `${responses.length} gallery items added successfully.`,
+        life: 3000
+      });
+    },
+    error: (err) => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: err?.error?.message || 'Failed to add gallery items',
+        life: 3000
+      });
+    }
+  });
+  this.fileUpload.clear();
+  }
 
 }
