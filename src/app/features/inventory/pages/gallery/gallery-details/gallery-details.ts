@@ -48,11 +48,18 @@ export class GalleryDetails implements OnInit{
   }
 
   getGalleryImage(gallery: GalleryDto): string {
-    return (gallery?.thumbImagePath ?? '')?.replace('~','https://localhost:7280');
+
+    const baseUrl = 'https://localhost:7280/';
+    const path = gallery?.thumbImagePath ?? '';
+
+    return `${baseUrl}${path}`
   }
 
   getItemImage(item: GalleryItemDto): string {
-    return (item?.thumbImagePath ?? '')?.replace('~','https://localhost:7280');
+    const baseUrl = 'https://localhost:7280/';
+    const path = item?.thumbImagePath ?? '';
+    
+    return `${baseUrl}${path}`
   }
 
   markAsTitle(itemId: number): void {
@@ -149,7 +156,7 @@ export class GalleryDetails implements OnInit{
 
 
   enableEdit(gallery: GalleryDto): void {
-    this.editingGalleryId = gallery.id;
+    this.editingGalleryId = gallery.id!;
     this.editedTitle = gallery.title;
   }
 
@@ -178,7 +185,7 @@ export class GalleryDetails implements OnInit{
 
   dto.title = trimmed;
 
-  this.galleryService.updateTitle(dto.id, dto).subscribe({
+  this.galleryService.updateTitle(dto.id!, dto).subscribe({
     next: (res) => {
       console.log(res)
       this.editingGalleryId = null;

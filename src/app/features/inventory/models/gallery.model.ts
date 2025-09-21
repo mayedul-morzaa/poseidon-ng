@@ -2,16 +2,16 @@ import { EntityStatusEnum} from 'src/app/core/enums/entity-status.enum';
 import { GalleryLevelEnum } from 'src/app/core/enums/gallery-level.enum';
 
 export interface GalleryDto {
-  id: number;
+  id?: number;
   parentGalleryId?: number;
-  parentName: string;
-  galleryLevel: GalleryLevelEnum;
+  parentName?: string;
+  galleryLevel?: GalleryLevelEnum;
   levelName?: string;
   title: string;
   thumbImage?: File;
   thumbImagePath?: string;
   imageAltText?: string;
-  status: EntityStatusEnum;
+  status?: EntityStatusEnum;
   statusText?: string;
   editDate?: Date;
   lastUpdateText?: string;
@@ -19,16 +19,16 @@ export interface GalleryDto {
 }
 
 export interface GalleryItemDto {
-  id: number;
-  galleryInfoId: number;
-  galleryName: string;
+  id?: number;
+  galleryInfoId?: number;
+  galleryName?: string;
   title: string;
   thumbImage?: File;
   thumbImagePath?: string;
   bigImage?: File;
   bigImagePath?: string;
   imageAltText?: string;
-  status: EntityStatusEnum;
+  status?: EntityStatusEnum;
   statusText?: string;
   sortIndex?: number;
   lastUpdateText?: string;

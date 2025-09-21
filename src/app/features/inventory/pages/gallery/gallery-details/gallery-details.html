@@ -64,13 +64,13 @@
                 label="Mark as Title"
                 icon="pi pi-check"
                 styleClass="p-button-sm p-button-success flex-1"
-                (click)="markAsTitle(item.id)"
+                (click)="markAsTitle(item.id!)"
               ></p-button>
 
               <p-button
                 icon="pi pi-times"
                 styleClass="p-button-sm p-button-danger"
-                (click)="removeGalleryItem(item.id)"
+                (click)="removeGalleryItem(item.id!)"
               ></p-button>
             </div>
           </div>
@@ -89,7 +89,7 @@
       label="Delete Gallery"
       icon="pi pi-trash"
       styleClass="p-button-danger"
-      (click)="deleteGallery(gallery.id)"
+      (click)="deleteGallery(gallery.id!)"
     ></p-button>
   </div>
   </ng-template>

@@ -44,20 +44,10 @@ export class GalleryList implements OnInit{
   showAddDialog = false;
   galleries : GalleryDto[] = [];
   loading: boolean = true;
-  @ViewChild('filter') filter!: ElementRef;
 
-  statuses = Object.keys(EntityStatusEnum)
-  .filter(key => !isNaN(Number(key)))
-  .map(key => {
-    const value = Number(key) as EntityStatusEnum;
-    return {
-      label: EntityStatusLabels[value],
-      value: value
-    };
-  });
 
   private galleryService = inject(GalleryService);
-  private dialogService = inject(DialogService);
+
   ngOnInit(): void {
     this.getAllGallery();
   }
@@ -80,11 +70,23 @@ export class GalleryList implements OnInit{
     })
   }
   getGalleryImage(gallery: GalleryDto): string {
-    return (gallery?.thumbImagePath ?? '')?.replace('~','https://localhost:7280');
+
+    const baseUrl = 'https://localhost:7280/';
+    const path = gallery?.thumbImagePath ?? '';
+
+    return `${baseUrl}${path}`
   }
 
   getItemImage(item: GalleryItemDto): string {
-    return (item?.thumbImagePath ?? '')?.replace('~','https://localhost:7280');
+    const baseUrl = 'https://localhost:7280/';
+    const path = item?.thumbImagePath ?? '';
+    
+    return `${baseUrl}${path}`
+  }
+
+  handleDialogClosed() {
+    this.showAddDialog = false;
+    this.getAllGallery();
   }
 
 }
