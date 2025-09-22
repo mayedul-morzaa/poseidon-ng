@@ -58,6 +58,10 @@ export class GalleryList implements OnInit{
         if(res.success){
           this.galleries = res.data as GalleryDto[];
           this.loading = false;
+
+          console.log(res.data[1].createDate);
+          console.log(new Date(res.data[1].createDate));
+          console.log(new Date(res.data[1].createDate).toLocaleString());
           console.log(res);
         }else{
           console.log(res);

@@ -1,5 +1,5 @@
 import { EntityStatusEnum } from '@/core/enums/entity-status.enum';
-import { GalleryLevelEnum } from '@/core/enums/gallery-level.enum';
+import { GalleryLevelEnum, GalleryLevelLabels } from '@/core/enums/gallery-level.enum';
 import { GalleryDto, GalleryItemDto } from '@/features/inventory/models/gallery.model';
 import { GalleryService } from '@/features/inventory/services/gallery.service';
 import { CommonModule } from '@angular/common';
@@ -33,43 +33,44 @@ export class GalleryAddOrUpdate implements OnInit{
   @Output() closed = new EventEmitter<void>();
 
   form: FormGroup;
+  filteredParentOptions : GalleryDto[] = [];
 
-  parentOptions = [
-    { id: 1, name: 'Nature Gallery' },
-    { id: 2, name: 'Travel Gallery' },
-    { id: 3, name: 'Food Gallery' }
-  ];
-
-  ngOnInit(): void {
-    
-  }
+  galleryLevelOptions = Object.entries(GalleryLevelLabels).map(([key, label]) => ({
+    id: Number(key),
+    name: label
+  }));
 
   constructor(
     private fb: FormBuilder,
     private galleryService: GalleryService,
     private messageService: MessageService
   ) {
-    this.form = this.fb.group({
-      title: ['', Validators.required],
-      isParent: [false],
-      parentGalleryId: [null],
-      galleryItems: [[]]
-    });
-    // Watch isParent toggle
-    this.form.controls['isParent'].valueChanges.subscribe((isParent: boolean) => {
-      if (isParent) {
-        this.form.controls['parentGalleryId'].disable();
-        this.form.controls['parentGalleryId'].setValue(null);
-      } else {
-        this.form.controls['parentGalleryId'].enable();
-      }
-    });
+      this.form = this.fb.group({
+        title: ['', Validators.required],
+        galleryLevel: [GalleryLevelEnum.Parent0, Validators.required],
+        parentGalleryId: [null],
+        galleryItems: [[]]
+      });
+  }
+
+  ngOnInit(): void {
+    this.setupGalleryLevelWatcher();
+
+    if (this.form.get('galleryLevel')?.value === GalleryLevelEnum.Parent0) {
+      this.applyBaseLevelDefaults();
+    }
   }
 
   closeDialog() {
     this.visible = false;
     this.closed.emit();
-    this.form.reset({ title: '', isParent: false, parentGalleryId: null, galleryItems: [] });
+    this.form.reset({
+      title: '',
+      galleryLevel: GalleryLevelEnum.Parent0,
+      parentGalleryId: null,
+      galleryItems: []
+    });
+    this.applyBaseLevelDefaults();
   }
 
   handleGalleryItemUpload(event: FileUploadHandlerEvent) {
@@ -78,49 +79,94 @@ export class GalleryAddOrUpdate implements OnInit{
   }
 
   submit() {
+      if (this.form.valid) {
+        const title = this.form.get('title')?.value;
+        const galleryLevel = this.form.get('galleryLevel')?.value;
+        const parentGalleryId = this.form.get('parentGalleryId')?.value;
+        const files: File[] = this.form.get('galleryItems')?.value;
 
-  if (this.form.valid) {
-    const title = this.form.get('title')?.value;
-    const isParent = this.form.get('isParent')?.value;
-    const parentGalleryId = this.form.get('parentGalleryId')?.value;
-    const files: File[] = this.form.get('galleryItems')?.value;
+        const formData = new FormData();
 
-    const formData = new FormData();
+        // GalleryDto fields
+        formData.append('title', title);
+        formData.append('galleryLevel', galleryLevel);
+        formData.append('parentGalleryId', galleryLevel === GalleryLevelEnum.Parent0 ? '' : parentGalleryId?.toString() ?? '');
 
-    // GalleryDto fields
-    formData.append('title', title);
-    formData.append('parentGalleryId', isParent ? '' : parentGalleryId?.toString() ?? '');
-
-    // GalleryItemDto[] fields
-    files.forEach((file, index) => {
-      formData.append(`galleryItems[${index}].title`, `${title} - item${index + 1}`);
-      formData.append(`galleryItems[${index}].thumbImage`, file);
-      formData.append(`galleryItems[${index}].imageAltText`, title);
-    });
-
-    console.log(formData);
-
-    this.galleryService.create(formData).subscribe({
-      next: (res) => {
-        console.log(res);
-        this.closeDialog();
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Updated',
-          detail: res.message,
-          life: 3000
+        // GalleryItemDto[] fields
+        files.forEach((file, index) => {
+          formData.append(`galleryItems[${index}].title`, `${title} - item${index + 1}`);
+          formData.append(`galleryItems[${index}].thumbImage`, file);
+          formData.append(`galleryItems[${index}].imageAltText`, title);
         });
-      },
-      error: (err) => {
-        console.log(err)
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: err?.error?.message || 'Failed to add gallery',
-          life: 3000
+
+        console.log(formData);
+
+        this.galleryService.create(formData).subscribe({
+          next: (res) => {
+            console.log(res);
+            this.closeDialog();
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Gallery Created',
+              detail: res.message,
+              life: 3000
+            });
+          },
+          error: (err) => {
+            console.log(err)
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: err?.error?.message || 'Failed to add gallery',
+              life: 3000
+            });
+          }
+        })
+      }
+    }
+
+  private setupGalleryLevelWatcher(): void {
+    this.form.get('galleryLevel')?.valueChanges.subscribe(level => {
+      if (level === GalleryLevelEnum.Parent0) {
+       this.applyBaseLevelDefaults();
+      } else {
+        const validParentLevel = level - 1;
+        this.galleryService.getGalleriesByLevel(validParentLevel).subscribe({
+          next: (res) => {
+            if (res?.success && res.data) {
+              this.filteredParentOptions = res.data;
+              this.form.get('parentGalleryId')?.enable();
+            } else {
+              this.filteredParentOptions = [];
+              this.form.get('parentGalleryId')?.disable();
+              this.messageService.add({
+                severity: 'warn',
+                summary: 'No galleries found',
+                detail: `No parent galleries available for level ${validParentLevel}`,
+                life: 4000
+              });
+            }
+          },
+          error: (err) => {
+            this.filteredParentOptions = [];
+            this.form.get('parentGalleryId')?.disable();
+            this.messageService.add({
+              severity: 'error',
+              summary: '',
+              detail: err?.error?.message || 'Something went wrong while fetching parent galleries.',
+              life: 5000
+            });
+          }
         });
       }
-    })
+    });
   }
+  private applyBaseLevelDefaults(): void {
+    this.form.get('parentGalleryId')?.setValue(null);
+    this.form.get('parentGalleryId')?.disable();
+  }
+
+  get isBaseLevel(): boolean {
+  return this.form.get('galleryLevel')?.value === GalleryLevelEnum.Parent0;
 }
 }

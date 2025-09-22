@@ -1,73 +1,4 @@
 
-    <!-- <p-dialog
-      [(visible)]="visible"
-      [modal]="true"
-      [style]="{ width: '600px', maxHeight: '90vh' }"
-      [contentStyle]="{ overflow: 'auto' }"
-      header="Add New Gallery"
-      (onHide)="closeDialog()"
-    > -->
-      <!-- <form [formGroup]="form" (ngSubmit)="submit()" class="p-fluid space-y-4">
-        <label for="title">Gallery Title</label>
-        <input pInputText id="title" formControlName="title" />
-
-        <label for="images">Gallery Images</label>
-        <p-fileUpload
-          name="galleryImages"
-          [multiple]="true"
-          [customUpload]="true"
-          (uploadHandler)="handleUpload($event)"
-          accept="image/*"
-          chooseLabel="Select Images"
-          dropZoneLabel="Drag & Drop Images Here"
-          class="w-full"
-        ></p-fileUpload>
-
-        <div class="flex justify-end pt-4">
-          <button pButton type="submit" label="Save" icon="pi pi-check" [disabled]="form.invalid"></button>
-        </div>
-      </form> -->
-    <!-- </p-dialog> -->
-<!-- 
-  <p-dialog [(visible)]="visible" [style]="{ width: '600px' }" header="Add New Gallery" [modal]="true">
-  <ng-template #content>
-    <div class="flex flex-col gap-6">
-
-      <div class="grid grid-cols-12 gap-4">
-        <div class="col-span-6">
-          <label for="title" class="block font-bold mb-2">Title</label>
-          <input type="text" pInputText id="title"  required autofocus fluid />
-          <small class="text-red-500" >Title is required.</small>
-        </div>
-        <div class="col-span-6">
-          <label for="parentGalleryId" class="block font-bold mb-2">Parent Gallery ID</label>
-          <input type="text" pInputText id="parentGalleryId"  fluid />
-        </div>
-      </div>
-
-      <div>
-        <label class="block font-bold mb-2">Gallery Items</label>
-        <p-fileUpload
-          name="galleryItems"
-          [customUpload]="true"
-          [auto]="true"
-          multiple
-          (uploadHandler)="handleGalleryItemUpload($event)"
-          accept="image/*"
-          chooseLabel="Select Images"
-          dropZoneLabel="Drag & drop images here"
-          class="w-full border-round surface-section shadow-1"
-        />
-      </div>
-    </div>
-  </ng-template>
-
-  <ng-template #footer>
-    <p-button label="Cancel" icon="pi pi-times" text (click)="closeDialog()" />
-    <p-button label="Save" icon="pi pi-check"  />
-  </ng-template>
-</p-dialog> -->
-
 <p-dialog 
 [(visible)]="visible" 
 [style]="{ width: '600px' }" 
@@ -87,21 +18,38 @@ header="Add New Gallery"
         }
       </div>
 
-      <!-- 🔹 ParentGalleryId + IsParent Row -->
-      <div class="grid grid-cols-12 gap-4 items-center">
-        <!-- Left: ParentGalleryId -->
-        <div class="col-span-8">
+      <!-- 🔹 Gallery Level Row -->
+      <div>
+        <label for="galleryLevel" class="block font-bold mb-2">Gallery Level</label>
+        <p-select
+          inputId="galleryLevel"
+          formControlName="galleryLevel"
+          [options]="galleryLevelOptions"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Select Gallery Level"
+          fluid
+          filter
+        />
+        @if (form.controls['galleryLevel'].invalid && form.controls['galleryLevel'].touched) {
+          <small class="text-red-500">Gallery Level is required.</small>
+        }
+      </div>
+
+      <!-- 🔹 ParentGalleryId -->
+      <div>
           <label for="parentGalleryId" class="block font-bold mb-2">Parent Gallery</label>
 
-          @if (!form.controls['isParent'].value) {
+          @if (!isBaseLevel) {
             <p-select
               inputId="parentGalleryId"
               formControlName="parentGalleryId"
-              [options]="parentOptions"
-              optionLabel="name"
+              [options]="filteredParentOptions"
+              optionLabel="title"
               optionValue="id"
               placeholder="Select Parent Gallery"
               fluid
+              filter
             />
           } @else {
             <input
@@ -110,20 +58,9 @@ header="Add New Gallery"
               formControlName="parentGalleryId"
               class="w-full"
               [disabled]="true"
-              placeholder="This is a parent gallery"
+              placeholder="Base galleries have no parent"
             />
           }
-        </div>
-
-        <!-- Right: IsParent Checkbox -->
-        <div class="col-span-4 flex items-center gap-2 pt-6">
-          <p-checkbox
-            inputId="isParent"
-            formControlName="isParent"
-            binary="true"
-          />
-          <label for="isParent" class="font-medium">Is Parent</label>
-        </div>
       </div>
 
         <div>
