@@ -167,6 +167,6 @@ export class GalleryAddOrUpdate implements OnInit{
   }
 
   get isBaseLevel(): boolean {
-  return this.form.get('galleryLevel')?.value === GalleryLevelEnum.Parent0;
-}
+    return this.form.get('galleryLevel')?.value === GalleryLevelEnum.Parent0;
+  }
 }
