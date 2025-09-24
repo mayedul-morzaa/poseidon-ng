@@ -1,6 +1,5 @@
 import { ApiResponse } from '@/core/models/api-response.model';
 import { MasterService } from '@/core/services/master.service';
-import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GalleryDto } from '../models/gallery.model';
@@ -9,7 +8,7 @@ import { GalleryDto } from '../models/gallery.model';
   providedIn: 'root'
 })
 export class GalleryService {
-  private readonly endpoint = 'galleries';
+  private readonly endpoint = 'admin/galleries';
 
   constructor(private masterService: MasterService) {}
 
@@ -44,6 +43,10 @@ export class GalleryService {
   }
 
   // =============== Gallery Item ===============
+    // Create new gallery
+  createGalleryItem(data: FormData): Observable<ApiResponse> {
+    return this.masterService.post<ApiResponse>(`${this.endpoint}/items/create`, data);
+  }
   deleteGalleryItem(id: number) : Observable<ApiResponse> {
     return this.masterService.delete<ApiResponse>(`${this.endpoint}/items/delete/${id}`);
   }
@@ -52,4 +55,8 @@ export class GalleryService {
     return this.masterService.put<ApiResponse>(`${this.endpoint}/items/${itemId}/set-as-thumb`, {});
   }
 
+  // ======== get gallery by level
+  getGalleriesByLevel(level: number): Observable<ApiResponse> {
+    return this.masterService.get<ApiResponse>(`${this.endpoint}/level/${level}`);
+  }
 }

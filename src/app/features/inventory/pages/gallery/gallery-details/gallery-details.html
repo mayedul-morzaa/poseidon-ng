@@ -46,6 +46,20 @@
   <!-- Divider -->
   <hr class="my-4 border-surface-200 dark:border-surface-700" />
 
+  <!-- Add Item Button -->
+<div class="flex justify-end mb-4">
+  <p-fileUpload
+    #fileUpload
+    mode="basic"
+    [auto]="true"
+    [customUpload]="true"
+    [multiple]="true"
+    accept="image/*"
+    chooseLabel="Add Item Images"
+    class="p-button-sm p-button-primary"
+    (uploadHandler)="handleAddGalleryItems($event)"
+  />
+</div>
   <!-- Body: Gallery Items Grid -->
   <div class="grid grid-cols-12 gap-4">
     @if(gallery.galleryItems.length > 0){
@@ -64,13 +78,13 @@
                 label="Mark as Title"
                 icon="pi pi-check"
                 styleClass="p-button-sm p-button-success flex-1"
-                (click)="markAsTitle(item.id)"
+                (click)="markAsTitle(item.id!)"
               ></p-button>
 
               <p-button
                 icon="pi pi-times"
                 styleClass="p-button-sm p-button-danger"
-                (click)="removeGalleryItem(item.id)"
+                (click)="removeGalleryItem(item.id!)"
               ></p-button>
             </div>
           </div>
@@ -89,7 +103,7 @@
       label="Delete Gallery"
       icon="pi pi-trash"
       styleClass="p-button-danger"
-      (click)="deleteGallery(gallery.id)"
+      (click)="deleteGallery(gallery.id!)"
     ></p-button>
   </div>
   </ng-template>

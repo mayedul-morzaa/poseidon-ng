@@ -1,18 +1,21 @@
 import { GalleryDto, GalleryItemDto } from '@/features/inventory/models/gallery.model';
 import { GalleryService } from '@/features/inventory/services/gallery.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card'
+import { FileUpload, FileUploadHandlerEvent, FileUploadModule } from 'primeng/fileupload';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-gallery-details',
   imports: [
     CardModule,
     ButtonModule,
-    FormsModule
+    FormsModule,
+    FileUploadModule
   ],
   templateUrl: './gallery-details.html'
 })
@@ -21,6 +24,8 @@ export class GalleryDetails implements OnInit{
   gallery!: GalleryDto ;
   editingGalleryId: number | null = null;
   editedTitle: string = '';
+  selectedItemFiles: File[] = [];
+  @ViewChild('fileUpload') fileUpload!: FileUpload;
 
   constructor(
     private route: ActivatedRoute,
@@ -48,11 +53,18 @@ export class GalleryDetails implements OnInit{
   }
 
   getGalleryImage(gallery: GalleryDto): string {
-    return (gallery?.thumbImagePath ?? '')?.replace('~','https://localhost:7280');
+
+    const baseUrl = 'https://localhost:7280/';
+    const path = gallery?.thumbImagePath ?? '';
+
+    return `${baseUrl}${path}`
   }
 
   getItemImage(item: GalleryItemDto): string {
-    return (item?.thumbImagePath ?? '')?.replace('~','https://localhost:7280');
+    const baseUrl = 'https://localhost:7280/';
+    const path = item?.thumbImagePath ?? '';
+    
+    return `${baseUrl}${path}`
   }
 
   markAsTitle(itemId: number): void {
@@ -149,7 +161,7 @@ export class GalleryDetails implements OnInit{
 
 
   enableEdit(gallery: GalleryDto): void {
-    this.editingGalleryId = gallery.id;
+    this.editingGalleryId = gallery.id!;
     this.editedTitle = gallery.title;
   }
 
@@ -178,7 +190,7 @@ export class GalleryDetails implements OnInit{
 
   dto.title = trimmed;
 
-  this.galleryService.updateTitle(dto.id, dto).subscribe({
+  this.galleryService.updateTitle(dto.id!, dto).subscribe({
     next: (res) => {
       console.log(res)
       this.editingGalleryId = null;
@@ -202,5 +214,45 @@ export class GalleryDetails implements OnInit{
     }
   });
 }
+
+// Gallery Item Add
+handleAddGalleryItems(event: FileUploadHandlerEvent) {
+  const files: File[] = event.files;
+
+  const requests = files.map((file, index) => {
+    const formData = new FormData();
+    formData.append('title', `${this.gallery.title} - item${this.gallery.galleryItems.length + index + 1}`);
+    formData.append('thumbImage', file);
+    formData.append('imageAltText', this.gallery.title);
+    formData.append('galleryInfoId', this.gallery.id!.toString());
+    return formData;
+  });
+
+  const requests$ = requests.map(formData =>
+  this.galleryService.createGalleryItem(formData)
+  );
+
+  forkJoin(requests$).subscribe({
+    next: (responses) => {
+      console.log(responses);
+      this.loadGallery(this.galleryId);
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Items Added',
+        detail: `${responses.length} gallery items added successfully.`,
+        life: 3000
+      });
+    },
+    error: (err) => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: err?.error?.message || 'Failed to add gallery items',
+        life: 3000
+      });
+    }
+  });
+  this.fileUpload.clear();
+  }
 
 }

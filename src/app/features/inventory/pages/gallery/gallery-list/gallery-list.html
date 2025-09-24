@@ -1,18 +1,20 @@
 
 <!-- Header Bar -->
-    <div class="flex items-center justify-between mb-4 px-2">
-      <h1 class="text-xl font-semibold text-surface-800 dark:text-white">Gallery List</h1>
+  <div class="flex items-center justify-between mb-4 px-2">
+    <h1 class="text-xl font-semibold text-surface-800 dark:text-white">Gallery List</h1>
 
-      <button
-        pButton
-        icon="pi pi-plus"
-        label="Add Gallery"
-        class="p-button-sm p-button-success"
-        (click)="showAddDialog = true"
-      ></button>
-    </div>
+    <button
+      pButton
+      icon="pi pi-plus"
+      label="Add Gallery"
+      class="p-button-sm p-button-success"
+      (click)="showAddDialog = true"
+    ></button>
+  </div>
 
-    <app-gallery-add-or-update [visible]="showAddDialog" (closed)="showAddDialog = false" />
+  <app-gallery-add-or-update 
+    [visible]="showAddDialog" 
+    (closed)="handleDialogClosed()" />
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 @for (gallery of galleries; track gallery.id) {
@@ -23,6 +25,7 @@
             <img
               [src]="getGalleryImage(gallery)"
               class="w-16 h-16 object-cover rounded"
+              [alt]="gallery.imageAltText"
             />
             <h2 class="text-lg font-semibold pl-2 flex-1">
               {{ gallery.title }}
@@ -38,7 +41,7 @@
   @for (item of gallery.galleryItems; track item.id) {
         <img
         [src]="getItemImage(item)"
-        [alt]="item.title"
+        [alt]="item.imageAltText"
         class="w-full h-12 object-cover rounded border border-surface-200 dark:border-surface-700"
         />
         }

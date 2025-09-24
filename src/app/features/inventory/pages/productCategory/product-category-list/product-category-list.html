@@ -1,0 +1,189 @@
+<div class="card">
+  <p-toolbar class="mb-12">
+    <ng-template #start>
+      <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
+    </ng-template>
+  </p-toolbar>
+    <ng-container *ngIf="categories.length > 0; else noData">
+        <p-table
+            #dt
+            [value]="categories"
+            [rows]="10"
+            [paginator]="true"
+            [globalFilterFields]="['categoryName', 'secondaryName', 'parentName']"
+            [tableStyle]="{ 'min-width': '75rem' }"
+            [rowHover]="true"
+            dataKey="id"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} categories"
+            [showCurrentPageReport]="true"
+            [rowsPerPageOptions]="[10, 20, 30]"
+        >
+            <ng-template #caption>
+            <div class="flex items-center justify-between">
+                <h5 class="m-0">Manage Product Categories</h5>
+                <p-iconfield>
+                <p-inputicon class="pi pi-search" />
+                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
+                </p-iconfield>
+            </div>
+            </ng-template>
+
+            <ng-template #header>
+            <tr>
+                <th pSortableColumn="categoryName" style="min-width: 16rem">
+                <span class="flex items-center gap-2">Name <p-sortIcon field="categoryName" /></span>
+                </th>
+                <th pSortableColumn="secondaryName" style="min-width: 14rem">
+                <span class="flex items-center gap-2">Secondary <p-sortIcon field="secondaryName" /></span>
+                </th>
+                <th pSortableColumn="catLevel" style="min-width: 10rem">
+                <span class="flex items-center gap-2">Level <p-sortIcon field="catLevel" /></span>
+                </th>
+                <th pSortableColumn="parentName" style="min-width: 14rem">
+                <span class="flex items-center gap-2">Parent <p-sortIcon field="parentName" /></span>
+                </th>
+                <th style="min-width: 8rem">Thumb Img</th>
+                <th pSortableColumn="status" style="min-width: 10rem">
+                <span class="flex items-center gap-2">Status <p-sortIcon field="status" /></span>
+                </th>
+                <th pSortableColumn="lastUpdateText" style="min-width: 12rem">
+                <span class="flex items-center gap-2">Last Update <p-sortIcon field="lastUpdateText" /></span>
+                </th>
+                <th style="min-width: 10rem"></th>
+            </tr>
+            </ng-template>
+
+            <ng-template #body let-cat>
+            <tr>
+                <td>{{ cat.categoryName }}</td>
+                <td>{{ cat.secondaryName }}</td>
+                <td>{{ cat.levelName}}</td>
+                <td>{{ cat.parentName }}</td>
+                <td>
+                <img
+                    *ngIf="cat.thumbImagePath"
+                    [src]="cat.thumbImagePath"
+                    [alt]="cat.imageAltText || cat.categoryName"
+                    style="width: 48px"
+                    class="rounded"
+                />
+                </td>
+                <td>
+                <p-tag [value]="cat.statusText"/>
+                </td>
+                <td>{{ cat.lastUpdateText }}</td>
+                <td>
+                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editCategory(cat)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteCategory(cat)" />
+                </td>
+            </tr>
+            </ng-template>
+        </p-table>
+    </ng-container>
+    <ng-template #noData>
+    <div class="p-5 text-center text-gray-500">
+      <i class="pi pi-folder-open text-3xl mb-3"></i>
+      <p class="text-lg font-semibold">No product categories found</p>
+    </div>
+  </ng-template>
+</div>
+
+
+<!-- Create Form -->
+ <p-dialog
+  [header]="isEditMode ? 'Edit Product Category' : 'Create Product Category'"
+  [(visible)]="showDialog"
+  [modal]="true"
+  [closable]="false"
+  [style]="{ width: '600px' }"
+>
+  <ng-template pTemplate="default">
+        <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label for="categoryName" class="block font-bold mb-2">Category Name</label>
+                <input class="w-full" id="categoryName" type="text" pInputText formControlName="categoryName" />
+            </div>
+
+            <div>
+                <label for="secondaryName" class="block font-bold mb-2">Secondary Name</label>
+                <input class="w-full" id="secondaryName" type="text" pInputText formControlName="secondaryName" />
+            </div>
+
+                <div>
+                <label for="catLevel" class="block font-bold mb-2">Category Level</label>
+                <p-select
+                    inputId="catLevel"
+                    formControlName="catLevel"
+                    [options]="productCategoryLevelOptions "
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Select Level"
+                    fluid
+                    filter
+                />
+                  @if (form.controls['catLevel'].invalid && form.controls['catLevel'].touched) {
+                        <small class="text-red-500">Category Level is required.</small>
+                    }
+                </div>
+
+                <div>
+                <label for="parentCategoryId" class="block font-bold mb-2">Parent Category</label>
+                @if (!isBaseLevel){
+                    <p-select
+                    inputId="parentCategoryId"
+                    formControlName="parentCategoryId"
+                    [options]="parentOptions"
+                    optionLabel="categoryName"
+                    optionValue="id"
+                    placeholder="Select Parent"
+                    fluid
+                    filter
+                />
+                }@else {
+                    <input
+                    type="text"
+                    pInputText
+                    formControlName="parentCategoryId"
+                    class="w-full"
+                    [disabled]="true"
+                    placeholder="Primary categories have no parent"
+                    /> 
+                } 
+
+                </div>
+                </div>
+            <div>
+                <label for="thumbImage" class="block font-bold mb-2">Thumbnail Image</label>
+                <p-fileUpload
+                name="thumbImage"
+                customUpload
+                [auto]="true"
+                (uploadHandler)="onThumbUpload($event)"
+                accept="image/*"
+                />
+            </div>
+
+            <div>
+                <label for="iconImage" class="block font-bold mb-2">Icon Image</label>
+                <p-fileUpload
+                name="iconImage"
+                customUpload
+                [auto]="true"
+                (uploadHandler)="onIconUpload($event)"
+                accept="image/*"
+                />
+            </div>
+
+            <div>
+                <label for="imageAltText" class="block font-bold mb-2">Image Alt Text</label>
+                <input class="w-full" id="imageAltText" type="text" pInputText formControlName="imageAltText" />
+            </div>
+        </form>
+  </ng-template>
+  
+  <ng-template pTemplate="footer">
+        <p-button label="Cancel" severity="secondary" (click)="closeDialog()" />
+        <p-button [label]="isEditMode ? 'Update' : 'Create'" (onClick)="submit()" [disabled]="form.invalid" />
+  </ng-template>
+</p-dialog>
