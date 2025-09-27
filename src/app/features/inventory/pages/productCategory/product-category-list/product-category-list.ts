@@ -27,11 +27,11 @@ import { ToolbarModule } from 'primeng/toolbar';
     TagModule,
     InputIconModule,
     InputTextModule,
-    CommonModule,
     DialogModule,
     ReactiveFormsModule,
     FileUploadModule,
-    SelectModule
+    SelectModule,
+    CommonModule
   ],
   templateUrl: './product-category-list.html'
 })
