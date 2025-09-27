@@ -1,0 +1,155 @@
+<div class="card">
+  <p-toolbar class="mb-12">
+    <ng-template #start>
+      <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
+    </ng-template>
+  </p-toolbar>
+
+  <ng-container *ngIf="brands.length > 0; else noData">
+    <p-table
+      #dt
+      [value]="brands"
+      [rows]="10"
+      [paginator]="true"
+      [globalFilterFields]="['name', 'typeName', 'webSite']"
+      [tableStyle]="{ 'min-width': '75rem' }"
+      [rowHover]="true"
+      dataKey="id"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} brands"
+      [showCurrentPageReport]="true"
+      [rowsPerPageOptions]="[10, 20, 30]"
+    >
+      <ng-template #caption>
+        <div class="flex items-center justify-between">
+          <h5 class="m-0">Manage Brands</h5>
+          <p-iconfield>
+            <p-inputicon class="pi pi-search" />
+            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
+          </p-iconfield>
+        </div>
+      </ng-template>
+
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="name" style="min-width: 16rem">
+            <span class="flex items-center gap-2">Name <p-sortIcon field="name" /></span>
+          </th>
+          <th pSortableColumn="brandTypeId" style="min-width: 12rem">
+            <span class="flex items-center gap-2">Brand Type <p-sortIcon field="brandTypeId" /></span>
+          </th>
+          <th style="min-width: 8rem">Thumb Img</th>
+          <th pSortableColumn="webSite" style="min-width: 14rem">
+            <span class="flex items-center gap-2">Website <p-sortIcon field="webSite" /></span>
+          </th>
+          <th pSortableColumn="status" style="min-width: 10rem">
+            <span class="flex items-center gap-2">Status <p-sortIcon field="status" /></span>
+          </th>
+          <th pSortableColumn="lastUpdateText" style="min-width: 12rem">
+            <span class="flex items-center gap-2">Last Update <p-sortIcon field="lastUpdateText" /></span>
+          </th>
+          <th style="min-width: 10rem"></th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-brand>
+        <tr>
+          <td>{{ brand.name }}</td>
+          <td>{{ brand.typeName }}</td>
+          <td>
+            <img
+              *ngIf="brand.thumbImagePath"
+              [src]="brand.thumbImagePath"
+              [alt]="brand.name"
+              style="width: 48px"
+              class="rounded"
+            />
+          </td>
+          <td>
+            <a *ngIf="brand.webSite" [href]="brand.webSite" target="_blank">{{ brand.webSite }}</a>
+          </td>
+          <td>
+            <p-tag [value]="brand.statusText" />
+          </td>
+          <td>{{ brand.lastUpdateText }}</td>
+          <td>
+            <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editBrand(brand)" />
+            <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteBrand(brand)" />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ng-container>
+
+  <ng-template #noData>
+    <div class="p-5 text-center text-gray-500">
+      <i class="pi pi-folder-open text-3xl mb-3"></i>
+      <p class="text-lg font-semibold">No brands found</p>
+    </div>
+  </ng-template>
+</div>
+
+<!-- Create/Edit Dialog -->
+<p-dialog
+  [header]="isEditMode ? 'Edit Brand' : 'Create Brand'"
+  [(visible)]="showDialog"
+  [modal]="true"
+  [closable]="false"
+  [style]="{ width: '600px' }"
+>
+  <ng-template pTemplate="default">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <div>
+            <label for="name" class="block font-bold mb-2">Brand Name</label>
+            <input class="w-full" id="name" type="text" pInputText formControlName="name" />
+            @if (form.controls['name'].invalid && form.controls['name'].touched) {
+                <small class="text-red-500">Brand Name is required.</small>
+            }
+            </div>
+
+            <div>
+            <label for="brandTypeId" class="block font-bold mb-2">Brand Type</label>
+            <p-select
+                inputId="brandTypeId"
+                formControlName="brandTypeId"
+                [options]="brandTypeOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select Brand Type"
+                fluid
+                filter
+            />
+            @if (form.controls['brandTypeId'].invalid && form.controls['brandTypeId'].touched) {
+                <small class="text-red-500">Brand Type is required.</small>
+            }
+            </div>
+
+            <div>
+            <label for="webSite" class="block font-bold mb-2">Website</label>
+            <input class="w-full" id="webSite" type="url" pInputText formControlName="webSite" />
+              @if (form.controls['webSite'].invalid && form.controls['webSite'].touched) {
+                <small class="text-red-500">Please enter a valid URL (http, https, or ftp).</small>
+            }
+            </div>
+        </div>
+
+        <div>
+            <label for="thumbImage" class="block font-bold mb-2">Thumbnail Image</label>
+            <p-fileUpload
+            name="thumbImage"
+            customUpload
+            [auto]="true"
+            (uploadHandler)="onThumbUpload($event)"
+            accept="image/*"
+            />
+        </div>  
+    </form>
+
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancel" severity="secondary" (click)="closeDialog()" />
+    <p-button [label]="isEditMode ? 'Update' : 'Create'" (onClick)="submit()" [disabled]="form.invalid" />
+  </ng-template>
+</p-dialog>

@@ -31,6 +31,7 @@ pnpm-debug.log*
 .history/
 
 # Angular build cache
+.angular
 .angular/cache
 **/*.tsbuildinfo
 
